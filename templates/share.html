@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Share 
+{% endblock %}
+{% block main %}
+<div class="container">
+        {% if error != "" %}
+        <div class="alert alert-dismissible alert-danger">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong>{{ error }}</strong>
+        </div>
+        {% elif success != "" %}
+        <div class="alert alert-dismissible alert-success">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong>{{ success }}</strong>
+        </div>
+        {% endif %}
+        <form action="{{ url_for('share') }}" method="post" class="mt-4">
+            <fieldset>
+                <div class="form-group">
+                <label for="exampleInputEmail1">Name of Event</label>
+                <input type="text" name="event_name" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Name the Event">
+                </div>
+                <div class="form-group">
+                <label for="exampleInputPassword1">Location of Event</label>
+                <input type="text" name="event_location" class="form-control" id="exampleInputPassword1" placeholder="Where is the Event?">
+                </div>
+                <div class="form-group">
+                        <label for="exampleInputPassword1">Date and Time of Event</label>
+                        <input type="datetime-local" name="event_time" class="form-control" id="exampleInputPassword1" placeholder="When is the Event?">
+                        </div>
+                <div class="form-group">
+                <label for="exampleTextarea">Describe the Event</label>
+                <textarea class="form-control" name="event_desc" id="exampleTextarea" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </fieldset>
+            </form>
+</div>
+{% endblock %}
