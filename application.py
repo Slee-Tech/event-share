@@ -116,7 +116,9 @@ def share():
 
 @app.route('/view', methods=["GET", "POST"])
 def view():
-    return render_template("events.html", test="view events test")
+    events = db.execute("SELECT * FROM events").fetchall()
+    db.commit()
+    return render_template("events.html", events=events)
     # should show a list of all current events, show in a table
     # should allow users to register
     # should show list of registered attendees from attendees table

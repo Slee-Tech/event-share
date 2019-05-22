@@ -12,4 +12,5 @@ A web application that allows users to create, share, find, and register to atte
 ```
     pip3 install -r requirements.txt
     export FLASK_APP=application.py
+    flask run
 ```
