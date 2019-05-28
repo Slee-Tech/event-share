@@ -1,10 +1,12 @@
 from flask import Flask, session, flash, redirect, render_template, request, session
 from flask_session import Session
 from flask import jsonify
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, func
 from sqlalchemy.orm import scoped_session, sessionmaker
 from werkzeug.exceptions import default_exceptions
 from werkzeug.security import check_password_hash, generate_password_hash
+import sqlite3
+from datetime import datetime, date
 
 app = Flask(__name__)
 
@@ -92,17 +94,23 @@ def share():
             return render_template("share.html", error="You failed to name the event.")
         elif not request.form.get("event_location"):
             return render_template("share.html", error="You failed to give the location of the event.")
+        elif not request.form.get("event_date"):
+            return render_template("share.html", error="You failed to state the date of the event.")
         elif not request.form.get("event_time"):
             return render_template("share.html", error="You failed to state when the event is.")
+        elif not request.form.get("event_am_pm"):
+            return render_template("share.html", error="You failed to specify if the event is in the AM or PM.")
         elif not request.form.get("event_desc"):
             return render_template("share.html", error="You failed to describe the event.")
         else:
             name = request.form.get("event_name")
             location = request.form.get("event_location")
+            date = request.form.get("event_date")
             time = request.form.get("event_time")
+            am_pm = request.form.get("event_am_pm")
             description = request.form.get("event_desc")
             poster_id = session["user_id"]
-        db.execute("INSERT INTO events (name, description, date, location, userid) VALUES(:name, :desc, :date, :loc, :id)", {"name":name, "desc":description, "date":time, "loc":location, "id":poster_id})
+        db.execute("INSERT INTO events (name, description, date, time, hour, location, userid) VALUES(:name, :desc, :date, :time, :hour, :loc, :id)", {"name":name, "desc":description, "date":date, "time":time, "hour":am_pm, "loc":location, "id":poster_id})
         db.commit()
         return render_template("share.html", error="", success="Event added successfully. Add another event if you'd like.")
 
@@ -116,9 +124,9 @@ def share():
 
 @app.route('/view', methods=["GET", "POST"])
 def view():
-    events = db.execute("SELECT * FROM events").fetchall()
+    events_list = db.execute("SELECT * FROM events").fetchall()
     db.commit()
-    return render_template("events.html", events=events)
+    return render_template("events.html", events=events_list)
     # should show a list of all current events, show in a table
     # should allow users to register
     # should show list of registered attendees from attendees table

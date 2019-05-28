@@ -19,20 +19,33 @@
         <form action="{{ url_for('share') }}" method="post" class="mt-4">
             <fieldset>
                 <div class="form-group">
-                <label for="exampleInputEmail1">Name of Event</label>
-                <input type="text" name="event_name" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Name the Event">
+                    <label for="exampleInputEmail1">Name of Event</label>
+                    <input type="text" name="event_name" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Name the Event">
                 </div>
                 <div class="form-group">
-                <label for="exampleInputPassword1">Location of Event</label>
-                <input type="text" name="event_location" class="form-control" id="exampleInputPassword1" placeholder="Where is the Event?">
+                    <label for="exampleInputPassword1">Location of Event</label>
+                    <input type="text" name="event_location" class="form-control" id="exampleInputPassword1" placeholder="Where is the Event?">
                 </div>
                 <div class="form-group">
-                        <label for="exampleInputPassword1">Date and Time of Event</label>
-                        <input type="datetime-local" name="event_time" class="form-control" id="exampleInputPassword1" placeholder="When is the Event?">
-                        </div>
+                    <label for="exampleInputPassword1">Date of Event</label>
+                    <input type="date" name="event_date" class="form-control" id="exampleInputPassword1" placeholder="Date of the Event?">
+                </div>
+                <div class="row form-group">
+                    <div class="col-3">
+                        <label for="exampleSelect2">Time of Event</label>
+                        <input type="number" min="1" max="12" name="event_time" class="form-control" id="exampleSelect2" placeholder="When is the Event?">
+                    </div>
+                    <div class="col-3">
+                        <label for="exampleSelect1">Time of Day</label>
+                        <select class="form-control" name="event_am_pm" id="exampleSelect1" placeholder="AM or PM">
+                            <option>AM</option>
+                            <option>PM</option>
+                        </select>
+                    </div>
+                </div>
                 <div class="form-group">
-                <label for="exampleTextarea">Describe the Event</label>
-                <textarea class="form-control" name="event_desc" id="exampleTextarea" rows="3"></textarea>
+                    <label for="exampleTextarea">Describe the Event</label>
+                    <textarea class="form-control" name="event_desc" id="exampleTextarea" rows="3"></textarea>
                 </div>
                 <button type="submit" class="btn btn-primary">Submit</button>
             </fieldset>
