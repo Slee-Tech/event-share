@@ -3,22 +3,35 @@
 {% block title %}
     Events 
 {% endblock %}
-<div class="container">
-    <div class="row">
-        <div class="col-4">
-{% block main %}
-    {% for event in events %}
-        <ul>
-            <li>{{ event.name }}</li>
-            <li>{{ event.description }}</li>
-            <li>{{ event.date }}</li>
-            <li>{{ event.time }}</li>
-            <li>{{ event.hour }}</li>
-            <li>{{ event.location }}</li>
-        </ul>
 
-    {% endfor %}
-</div>
-</div>
+{% block main %}
+<div class="container">
+    <h3 class="text-center mt-4 mb-4">Events in Your Area</h3>
+    <div class="row text-center">
+        <div class="col-12">
+        <table class="table table-hover">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Event Name</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Time</th>
+                    <th scope="col">Location</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for event in events %}
+                <tr>
+                    <td>{{ event.name }}</td>
+                    <td>{{ event.description }}</td>
+                    <td>{{ event.date }}</td>
+                    <td>{{ event.time }} {{ event.hour }}</td>
+                    <td>{{ event.location }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table> 
+        </div>
+    </div>
 </div>
 {% endblock %}

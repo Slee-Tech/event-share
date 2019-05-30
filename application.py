@@ -85,6 +85,10 @@ def register():
 
     return redirect("/home")
 
+@app.route('/about')
+def about():
+    return render_template("about.html")
+
 @app.route('/share', methods=["GET", "POST"])
 def share():
     if request.method == "GET":
@@ -127,7 +131,7 @@ def view():
     events_list = db.execute("SELECT * FROM events").fetchall()
     db.commit()
     return render_template("events.html", events=events_list)
-    # should show a list of all current events, show in a table
-    # should allow users to register
-    # should show list of registered attendees from attendees table
-    # should give creator option to delete if canceled
+    # should show a list of all current events, show in a table - done
+    # should allow users to register, unless they added the event, then allow user to edit or delete
+    # should show list of registered attendees from attendees table, a dropdown by clicking somewhere in event table
+
