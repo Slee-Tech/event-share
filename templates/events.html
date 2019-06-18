@@ -1,5 +1,10 @@
 {% extends "layout.html" %}
 
+{% block head %}
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+{% endblock %}
+
+
 {% block title %}
     Events 
 {% endblock %}
@@ -7,31 +12,40 @@
 {% block main %}
 <div class="container">
     <h3 class="text-center mt-4 mb-4">Events in Your Area</h3>
-    <div class="row text-center">
-        <div class="col-12">
+    <div class="row">
+        
         <table class="table table-hover">
-            <thead class="thead-dark">
-                <tr>
-                    <th scope="col">Event Name</th>
-                    <th scope="col">Description</th>
-                    <th scope="col">Date</th>
-                    <th scope="col">Time</th>
-                    <th scope="col">Location</th>
+                
+            <thead>
+                <tr class=" text-center bg-dark text-white">
+                    <th>Event Name</th>
+                    <th>Description</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Location</th>
                 </tr>
             </thead>
             <tbody>
             {% for event in events %}
-                <tr>
-                    <td>{{ event.name }}</td>
-                    <td>{{ event.description }}</td>
-                    <td>{{ event.date }}</td>
-                    <td>{{ event.time }} {{ event.hour }}</td>
-                    <td>{{ event.location }}</td>
+                <tr class="event text-center">
+                    <td scope="col">{{ event.name }}</td>
+                    <td scope="col">{{ event.description }}</td>
+                    <td scope="col">{{ event.date }}</td>
+                    <td scope="col">{{ event.time }} {{ event.hour }}</td>
+                    <td scope="col">{{ event.location }}</td>
                 </tr>
+                <tr class="show-more text-center">
+                    <td scope="col">Lorem ipsum dolor sit amet.</td>
+                    <td scope="col">Lorem ipsum dolor sit amet.</td>
+                    <td scope="col">Lorem ipsum dolor sit amet.</td>
+                    <td scope="col">Lorem ipsum dolor sit amet.</td>
+                    <td scope="col">Lorem ipsum dolor sit amet.</td>
+                </tr>
+                
             {% endfor %}
             </tbody>
         </table> 
-        </div>
+        
     </div>
 </div>
 {% endblock %}

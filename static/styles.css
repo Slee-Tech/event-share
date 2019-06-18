@@ -1,0 +1,17 @@
+table {
+    table-layout:fixed;
+}
+
+td {
+    overflow:hidden; 
+    white-space:nowrap;
+}
+
+.show-more {
+    display: none;
+}
+
+.event {
+    cursor: pointer;
+}
+
