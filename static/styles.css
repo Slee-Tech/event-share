@@ -3,15 +3,39 @@ table {
 }
 
 td {
-    overflow:hidden; 
-    white-space:nowrap;
+    overflow: hidden; 
+    height: auto;
+}
+
+.table th, .table td {
+    border-top:none;
 }
 
 .show-more {
     display: none;
+    border:none;
 }
 
 .event {
     cursor: pointer;
+}
+
+.event:hover {
+    background-color: #f3f3f3;
+}
+
+@media (max-width: 550px) {
+    .table th, .table td {
+        padding: .75rem;
+        text-align: left;
+    }
+
+    table {
+        table-layout:auto;
+    }
+}
+
+.attendees {
+    list-style-type: none;
 }
 

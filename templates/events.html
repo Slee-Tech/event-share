@@ -13,9 +13,7 @@
 <div class="container">
     <h3 class="text-center mt-4 mb-4">Events in Your Area</h3>
     <div class="row">
-        
-        <table class="table table-hover">
-                
+        <table class="table">
             <thead>
                 <tr class=" text-center bg-dark text-white">
                     <th>Event Name</th>
@@ -27,6 +25,7 @@
             </thead>
             <tbody>
             {% for event in events %}
+                <!-- allow this row to be editable if created by user-->
                 <tr class="event text-center">
                     <td scope="col">{{ event.name }}</td>
                     <td scope="col">{{ event.description }}</td>
@@ -34,18 +33,27 @@
                     <td scope="col">{{ event.time }} {{ event.hour }}</td>
                     <td scope="col">{{ event.location }}</td>
                 </tr>
-                <tr class="show-more text-center">
-                    <td scope="col">Lorem ipsum dolor sit amet.</td>
-                    <td scope="col">Lorem ipsum dolor sit amet.</td>
-                    <td scope="col">Lorem ipsum dolor sit amet.</td>
-                    <td scope="col">Lorem ipsum dolor sit amet.</td>
-                    <td scope="col">Lorem ipsum dolor sit amet.</td>
+                <tr class="show-more">
+                    <form name="login" action="{{ url_for('home') }}" method="post" class="mb-4 mt-4">
+                    <td colspan="2" class="text-center"><button type="submit" class="btn btn-primary">Register to Attend</button>
+                        <!-- will be replaced with acutal attendees data passed -->
+                        <ul class="mt-2 attendees list-group">
+                            <li class="list-group-item list-group-item-dark">List of Registered Attendees</li>
+                            {% for key, value in attend.items() %}
+                                {% if key == event.id %}
+                                    {% for i in value %}
+                                        <li class="list-group-item">{{i}}</li>
+                                    {% endfor %}
+                                {% endif %}
+                            {% endfor %}
+                            
+                        </ul>
+                    </td>
+                    </form>
                 </tr>
-                
             {% endfor %}
             </tbody>
         </table> 
-        
     </div>
 </div>
 {% endblock %}

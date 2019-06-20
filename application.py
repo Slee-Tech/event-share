@@ -130,9 +130,26 @@ def share():
 @app.route('/view', methods=["GET", "POST"])
 def view():
     events_list = db.execute("SELECT * FROM events").fetchall()
+    # this query should get all of the data needed, gives event info, attendees names, and user_id of creator, will have to edit events template
+    event_info = db.execute("SELECT users.name as username, events.* FROM users JOIN attendees on users.id = attendees.user_id join events on attendees.event_id = events.id").fetchall();
+    
+    # adds unique event ids from query as keys into dict, then chains registered attendees to each bucket 
+    attendees = {}
+    for events in event_info:
+        if events.id not in attendees:
+            attendees[events.id] = []
+        attendees[events.id].append(events.username)
+
     db.commit()
-    return render_template("events.html", events=events_list)
+    return render_template("events.html", events=events_list, attend=attendees)
     # should show a list of all current events, show in a table - done
     # should allow users to register, unless they added the event, then allow user to edit or delete
     # should show list of registered attendees from attendees table, a dropdown by clicking somewhere in event table
+
+@app.route('/attend/<string:event_id>', methods=["POST"])
+def attend(event_id):
+        # posting the attend form should bring to a confirmation page then redirect with the updated list
+        # will add user to list of registered attendees table and give a confirmation
+        # will have to add in session["user_id"] and event id as argument then insert into attendees table
+    return
 
