@@ -11,6 +11,12 @@
 
 {% block main %}
 <div class="container">
+    {% if success != "" %}
+    <div class="alert alert-dismissible alert-success">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <strong>{{ success }}</strong>
+    </div>
+    {% endif %}
     <h3 class="text-center mt-4 mb-4">Events in Your Area</h3>
     <div class="row">
         <table class="table">
@@ -34,9 +40,13 @@
                     <td scope="col">{{ event.location }}</td>
                 </tr>
                 <tr class="show-more">
-                    <form name="login" action="{{ url_for('home') }}" method="post" class="mb-4 mt-4">
-                    <td colspan="2" class="text-center"><button type="submit" class="btn btn-primary">Register to Attend</button>
-                        <!-- will be replaced with acutal attendees data passed -->
+                    {% if event.userid == session["user_id"] %}
+                    <form name="edit" action="{{ url_for('edit', event_id=event.id) }}" method="get" class="mb-4 mt-4">
+                        <td colspan="2" class="text-center"><button type="submit" class="btn btn-primary">Edit or Delete Your Event</button>
+                    {% else %}
+                    <form name="attend" action="{{ url_for('attend', event_id=event.id) }}" method="post" class="mb-4 mt-4">
+                        <td colspan="2" class="text-center"><button type="submit" class="btn btn-primary">Register to Attend</button>
+                    {% endif %}
                         <ul class="mt-2 attendees list-group">
                             <li class="list-group-item list-group-item-dark">List of Registered Attendees</li>
                             {% for key, value in attend.items() %}

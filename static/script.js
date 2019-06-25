@@ -1,6 +1,6 @@
-
 document.addEventListener("DOMContentLoaded", () => {
     let more = document.querySelectorAll('.show-more');
+    
     document.querySelectorAll('.event').forEach((event,i ) => {
         event.onclick = () => {
             // toggle between showing
@@ -11,5 +11,4 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
     });
-    
 });

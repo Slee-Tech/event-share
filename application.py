@@ -1,4 +1,4 @@
-from flask import Flask, session, flash, redirect, render_template, request, session
+from flask import Flask, session, flash, redirect, render_template, request, session, url_for
 from flask_session import Session
 from flask import jsonify
 from sqlalchemy import create_engine, func
@@ -39,7 +39,6 @@ def index():
 
 @app.route('/home', methods=["GET", "POST"])
 def home():
-
     if request.method == "POST":
         if not request.form.get("username"):
             return render_template("home.html", error="You failed to enter a username.")
@@ -92,9 +91,11 @@ def about():
 
 @app.route('/share', methods=["GET", "POST"])
 def share():
+    # handles request for loading submission form
     if request.method == "GET":
         return render_template("share.html", error="", success="")
     else:
+        # handles POST submissions
         if not request.form.get("event_name"):
             return render_template("share.html", error="You failed to name the event.")
         elif not request.form.get("event_location"):
@@ -115,41 +116,80 @@ def share():
             am_pm = request.form.get("event_am_pm")
             description = request.form.get("event_desc")
             poster_id = session["user_id"]
-        db.execute("INSERT INTO events (name, description, date, time, hour, location, userid) VALUES(:name, :desc, :date, :time, :hour, :loc, :id)", {"name":name, "desc":description, "date":date, "time":time, "hour":am_pm, "loc":location, "id":poster_id})
-        db.commit()
-        return render_template("share.html", error="", success="Event added successfully. Add another event if you'd like.")
-
-
-
-    # needs to handle form submission for new event on POST request 
-    # GET will render share template
-    # will event add to events table
-    # may redirect back to home
-    
+        
+        # checks to see if form was submitted from edit page and if it should be updated
+        if request.form.get("save_changes"):
+            event_id = request.form.get("delete_event_id")
+            db.execute("UPDATE events SET name=:n, description=:d, date=:date, time=:t, hour=:h, location=:l WHERE id = :id", {"n": name, "d":description, "date":date, "t":time, "h":am_pm, "l":location,"id": event_id})
+            db.commit()
+            message = f"successfully edited event. Add another if you'd like."
+            return render_template("share.html", error="", success=message)
+        
+        # checks if event was submitted to be deleted
+        elif request.form.get("delete_event"):
+            event_id = request.form.get("delete_event_id")
+            event = session["events"]
+            # using list comprehension to get the ids of events in session["events"] to access index
+            ev_ids = [ev[0] for ev in event]
+            # removes event if id is found in list of ids
+            for i, ev in enumerate(ev_ids):
+                if ev == int(event_id):
+                    session["events"].pop(i)
+            db.execute("DELETE FROM events WHERE id = :id", {"id": event_id})
+            db.commit()
+            test = f"Event with id of {event_id} was successfully deleted and {ev_ids}"
+            message = "You event was successfully deleted."
+            return render_template("events.html", events=session["events"], attend=session["attendees"], success=message)
+        # this means the form was submitted from share page
+        else:
+            db.execute("INSERT INTO events (name, description, date, time, hour, location, userid) VALUES(:name, :desc, :date, :time, :hour, :loc, :id)", {"name":name, "desc":description, "date":date, "time":time, "hour":am_pm, "loc":location, "id":poster_id})
+            db.commit()
+            return render_template("share.html", error="", success="Event added successfully. Add another event if you'd like.")
 
 @app.route('/view', methods=["GET", "POST"])
 def view():
     events_list = db.execute("SELECT * FROM events").fetchall()
     # this query should get all of the data needed, gives event info, attendees names, and user_id of creator, will have to edit events template
     event_info = db.execute("SELECT users.name as username, events.* FROM users JOIN attendees on users.id = attendees.user_id join events on attendees.event_id = events.id").fetchall();
-    
     # adds unique event ids from query as keys into dict, then chains registered attendees to each bucket 
     attendees = {}
-    for events in event_info:
-        if events.id not in attendees:
-            attendees[events.id] = []
-        attendees[events.id].append(events.username)
+    if event_info:
+        for events in event_info:
+            if events.id not in attendees:
+                attendees[events.id] = []
+            attendees[events.id].append(events.username)
+    else:
+        # still creates index if no attendees are registered
+        for events in events_list:
+            if events.id not in attendees:
+                attendees[events.id] = []
+
+    session["events"] = events_list
+    session["attendees"] = attendees
 
     db.commit()
-    return render_template("events.html", events=events_list, attend=attendees)
+    return render_template("events.html", events=events_list, attend=attendees, success="")
     # should show a list of all current events, show in a table - done
-    # should allow users to register, unless they added the event, then allow user to edit or delete
-    # should show list of registered attendees from attendees table, a dropdown by clicking somewhere in event table
+    # should allow users to register, unless they added the event, then allow user to edit or delete - done
+    # should show list of registered attendees from attendees table, a dropdown by clicking somewhere in event table -done
 
-@app.route('/attend/<string:event_id>', methods=["POST"])
+@app.route('/view/<string:event_id>', methods=["POST"])
 def attend(event_id):
         # posting the attend form should bring to a confirmation page then redirect with the updated list
         # will add user to list of registered attendees table and give a confirmation
         # will have to add in session["user_id"] and event id as argument then insert into attendees table
-    return
+    ev_id = event_id
+    event = db.execute("SELECT * FROM events WHERE id = :id", {"id": ev_id}).fetchone()
+    db.execute("INSERT INTO attendees (event_id, user_id) VALUES(:ev_id, :u_id)", {"ev_id":ev_id, "u_id":session["user_id"]})
+    db.commit()
+    session["attendees"][int(ev_id)].append(session["name"])
+    # now insert user and event id into attendees to update
+    message = f"You've successfully registered to attend the {event.name} event. Continue browsing events."
+    return render_template("events.html", events=session["events"], attend=session["attendees"], success=message)
 
+@app.route('/view/edit/<string:event_id>', methods=["GET", "POST"])
+def edit(event_id):
+    if request.method == "GET":
+        event = db.execute("SELECT * FROM events WHERE id = :id", {"id": event_id}).fetchone()
+        db.commit()
+        return render_template("edit.html", ev=event)
